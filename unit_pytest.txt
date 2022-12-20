@@ -1,0 +1,160 @@
+import string
+import random
+import unittest
+import pytest
+
+
+
+
+class Login:
+
+    def __init__(self, login=None):
+        self.login = login
+
+    def set_login(self, value=None):
+        if value is None:
+            self.login = f"User №{len(DataBase.data) + 1}"
+            return self.login
+        else:
+            self.login = value
+            return self.login
+
+    def get_login(self):
+        return self.login
+
+
+class Password:
+    PASSWORD_GENERATE = string.digits + string.ascii_letters
+
+    def get_password(self):
+        self.password = [''.join(random.choice(self.PASSWORD_GENERATE)) for i in range(13)]
+        return "".join(self.password)
+
+
+
+
+class DataBase(Login, Password):
+    data = {}
+
+    def data_dict_add(self):
+        if Login.get_login(self) is None:
+            return "Enter your user login!"
+
+        elif Login.get_login(self) not in self.data and Login.get_login(self) is not None:
+            self.data[Login.get_login(self)] = Password.get_password(self)
+
+
+        elif Login.get_login(self) in self.data:
+            print("User is already registered")
+
+    def delete_users(self, login=None):
+        if login is None:
+            if Login.get_login(self) is not None and Login.get_login(self) in self.data:
+                del self.data[Login.get_login(self)]
+                return self.data
+            elif Login.get_login(self) is None or Login.get_login(self) not in self.data:
+                print("Your login not in database or equal None")
+        else:
+            del self.data[login]
+
+    def get_data_dict(self):
+        return self.data
+
+
+
+
+#Test Login
+class TestLogin(unittest.TestCase):
+    def test_set_login_is_None(self):
+        login = Login.set_login(self)
+        self.assertEqual(login, f"User №{len(DataBase.data)+1}")
+
+
+    def test_set_login_is_not_None(self):
+        login = Login.set_login(self, "Art")
+        self.assertEqual(login, "Art")
+
+    def test_get_login(self):
+        login = Login()
+        lo = login.get_login()
+        self.assertEqual(lo, None)
+
+
+
+#Test Password
+class TestPassword(unittest.TestCase):
+    def test_password_type(self):
+        password = Password()
+        p = password.get_password()
+        self.assertEqual(type(p), str)
+
+    def test_password_has_letter_and_digit(self):
+        password = Password()
+        p = password.get_password()
+        self.assertTrue(p.isalnum())
+
+    def test_password_is_generate(self):
+        password = Password()
+        p = password.get_password()
+        self.assertNotEqual(p, None)
+
+#Test DataBase
+
+class TestDataBase(unittest.TestCase):
+    def test_data_dict_without_login(self):
+        da = DataBase()
+        d = da.data_dict_add()
+        self.assertEqual(d, "Enter your user login!")
+
+
+    def test_data_dict_with_generate_login(self):
+        da = DataBase()
+        login = da.set_login()
+        self.assertNotEqual(login, None)
+
+    def test_data_dict_is_right_generate(self):
+        da = DataBase()
+        login = da.set_login()
+        self.assertEqual(login, f"User №{len(da.data)+1}")
+
+    def test_data_dict_key_in_data(self):
+        da = DataBase()
+        login = da.set_login()
+        da.data_dict_add()
+        self.assertIn(login, da.data)
+
+    def test_data_dict_has_value(self):
+        da = DataBase()
+        login = da.set_login()
+        da.data_dict_add()
+        self.assertIsNotNone(da.data[login])
+
+
+
+# Pytest Login
+def test_set_login_None():
+    login = Login()
+    assert login.get_login() == None
+
+
+def test_set_login():
+    login = Login('Art')
+    assert login.get_login() == 'Art'
+
+def test_generate_login():
+    login = Login()
+    login.set_login()
+    assert login.get_login() == f"User №{len(DataBase.data)+1}"
+
+#Pytest Password
+def test_password_generate():
+    password = Password()
+    assert password.get_password() != None
+
+
+
+
+if __name__ == '__main__':
+    unittest.main()
+
+
