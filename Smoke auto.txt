@@ -1,0 +1,67 @@
+import time
+
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+import unittest
+
+
+# class TestSeleniumIntroduction(unittest.TestCase):
+#     """Selenium introduction"""
+#     driver = webdriver.Firefox()
+#     wait = WebDriverWait(driver, 10)
+#
+#     def test_title(self):
+#         self.driver.get("https://the-internet.herokuapp.com/inputs")
+#         self.assertEqual('The Internet', self.driver.title)
+#         elem_input = self.driver.find_element(By.XPATH, '//*[@id="content"]/div/div/div/input')
+#         elem_input.send_keys('1')
+#         time.sleep(3)
+#         click_mod = self.driver.find_element(By.XPATH, '//*[@id="content"]/div/div/div/input')
+#         click_mod.send_keys('324')
+#         elem_link = self.driver.find_element(By.XPATH, '/html/body/div[3]/div/div/a')
+#         elem_link.click()
+#         time.sleep(3)
+#         self.driver.close()
+
+# class MyTestCase(unittest.TestCase):
+#
+#     def setUp(self):
+#         my_app.app.testing = True
+#         self.app = my_app.app.test_client()
+#
+#     def test_home(self):
+#         result = self.app.get('/')
+#         # Make your assertions
+class TestSeleniumAdvancedP1(unittest.TestCase):
+    """Selenium advanced p1"""
+
+    driver = None
+    rubber_duck = '//*[@id="site-menu"]/ul/li[2]/a'
+    subcategory = '//*[@id="box-category-tree"]/nav/ul/li/ul/li/a'
+
+    def setUp(self):
+        self.driver = webdriver.Firefox()
+        self.driver.get('https://litecart.stqa.ru/en/')
+
+    def tearDown(self) -> None:
+        self.driver.quit()
+
+    def test_home_page_title(self):
+        self.assertEqual('Online Store | My Store', self.driver.title)        #Test_1 (home page title)
+
+    def test_rubber_ducks_link(self):
+        self.driver.find_element(By.XPATH, self.rubber_duck).click()
+        self.assertEqual('Rubber Ducks | My Store', self.driver.title)        #Test_2 (rubber_ducks_link)
+
+    def test_subcategory_link(self):
+        self.driver.find_element(By.XPATH, self.rubber_duck).click()
+        self.driver.find_element(By.XPATH, self.subcategory).click()
+        self.assertEqual('Subcategory | My Store', self.driver.title)  # Test_3 (subcategory_link)
+
+    def test_home_page_return(self):
+        self.driver.find_element(By.XPATH, self.rubber_duck).click()
+        self.driver.find_element(By.XPATH, self.subcategory).click()
+        self.driver.find_element(By.XPATH,'''//li[@class="general-0"]''').click()
+        self.assertEqual('Online Store | My Store', self.driver.title)
